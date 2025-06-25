@@ -55,7 +55,10 @@ function Dashboard() {
     <div className="dashboard">
       <header className="twitter-header">
         <div className="header-content">
-          <h1>Bleater</h1>
+          <h1>
+            <img src="/logo.png" alt="Bleater Logo" className="twitter-logo" />
+            Bleater
+          </h1>
           <div className="user-info">
             <div className="user-profile">
               {user?.email &&
