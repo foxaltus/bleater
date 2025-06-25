@@ -1,20 +1,28 @@
-import type { ReactNode } from 'react';
-import { useAuth } from '../lib/useAuth';
-import AuthForm from './AuthForm';
+import { useEffect } from "react";
+import type { ReactNode } from "react";
+import { useAuth } from "../lib/useAuth";
 
 interface ProtectedRouteProps {
-  children: ReactNode;
+  readonly children: ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, loading } = useAuth();
+  const { user, loading, signInWithGitHub } = useAuth();
 
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
+  // Automatically trigger GitHub sign-in if user is not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      signInWithGitHub();
+    }
+  }, [loading, user, signInWithGitHub]);
 
-  if (!user) {
-    return <AuthForm />;
+  // Show loading screen with logo while waiting for authentication
+  if (loading || !user) {
+    return (
+      <div className="loading-container">
+        <img src="/logo.png" alt="Bleater Logo" className="loading-logo" />
+      </div>
+    );
   }
 
   return <>{children}</>;

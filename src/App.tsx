@@ -1,8 +1,7 @@
 import "./App.css";
-import AuthForm from "./components/AuthForm";
 import { AuthProvider } from "./lib/auth";
 import { useAuth } from "./lib/useAuth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PostList from "./components/PostList";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCreatePost } from "./lib/queries";
@@ -155,13 +154,24 @@ function Dashboard() {
 }
 
 function AppContent() {
-  const { user, loading } = useAuth();
+  const { user, loading, signInWithGitHub } = useAuth();
 
-  if (loading) {
-    return <div>Loading...</div>;
+  useEffect(() => {
+    if (!loading && !user) {
+      // Automatically redirect to GitHub login
+      signInWithGitHub();
+    }
+  }, [loading, user, signInWithGitHub]);
+
+  if (loading || !user) {
+    return (
+      <div className="loading-container">
+        <img src="/logo.png" alt="Bleater Logo" className="loading-logo" />
+      </div>
+    );
   }
 
-  return user ? <Dashboard /> : <AuthForm />;
+  return <Dashboard />;
 }
 
 // Create a client

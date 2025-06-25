@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo } from 'react';
-import type { User, Session } from '@supabase/supabase-js';
-import { supabase } from './supabase';
-import { AuthContext } from './authContext';
+import { useEffect, useState, useMemo } from "react";
+import type { User, Session } from "@supabase/supabase-js";
+import { supabase } from "./supabase";
+import { AuthContext } from "./authContext";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -32,14 +32,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
   };
 
-  const value = useMemo(() => ({
-    session,
-    user,
-    loading,
-    signOut,
-  }), [session, user, loading]);
+  // Add GitHub sign in function
+  const signInWithGitHub = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "github",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+  };
+
+  const value = useMemo(
+    () => ({
+      session,
+      user,
+      loading,
+      signOut,
+      signInWithGitHub,
+    }),
+    [session, user, loading]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
-
