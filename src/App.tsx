@@ -63,10 +63,29 @@ function Dashboard() {
               aria-label="Create a new post"
               value={postText}
               onChange={(e) => setPostText(e.target.value)}
+              onKeyDown={(e) => {
+                // Submit on Enter (but not when Alt/Shift/Ctrl is pressed)
+                if (
+                  e.key === "Enter" &&
+                  !e.altKey &&
+                  !e.shiftKey &&
+                  !e.ctrlKey
+                ) {
+                  e.preventDefault();
+                  if (postText.trim() && !createPost.isPending) {
+                    handlePostSubmit(e);
+                  }
+                }
+              }}
               maxLength={280}
             ></textarea>
             <div className="post-actions">
-              <span className="char-count">{postText.length}/280</span>
+              <span className="char-count">
+                {postText.length}/280
+                <span className="keyboard-hint">
+                  Press Enter to post, Shift+Enter for line break
+                </span>
+              </span>
               <button
                 type="submit"
                 disabled={!postText.trim() || createPost.isPending}

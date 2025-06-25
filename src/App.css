@@ -113,6 +113,14 @@
 .char-count {
   color: #6e767d;
   font-size: 0.875rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.keyboard-hint {
+  font-size: 0.75rem;
+  color: #8899a6;
+  margin-top: 4px;
 }
 
 .post-actions button {
