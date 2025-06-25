@@ -1,54 +1,25 @@
-import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
 import Post from "./Post";
-import type { Database } from "../lib/schema";
-
-type PostType = Database["public"]["Tables"]["post"]["Row"];
+import { usePosts } from "../lib/queries";
 
 export default function PostList() {
-  const [posts, setPosts] = useState<PostType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Function to fetch posts
-  const fetchPosts = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("post")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(20);
-
-      if (error) {
-        throw error;
-      }
-
-      setPosts(data || []);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-      setError("Failed to load posts. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: posts = [], isLoading, isError, error, refetch } = usePosts();
 
   // Function to refresh posts manually
   const refreshPosts = () => {
-    setLoading(true);
-    fetchPosts();
+    refetch();
   };
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <div className="loading-posts">Loading posts...</div>;
   }
 
-  if (error) {
-    return <div className="error-message">{error}</div>;
+  if (isError) {
+    return (
+      <div className="error-message">
+        Failed to load posts. Please try again later.
+        {error instanceof Error && `: ${error.message}`}
+      </div>
+    );
   }
 
   if (posts.length === 0) {
@@ -61,9 +32,9 @@ export default function PostList() {
         <button
           onClick={refreshPosts}
           className="refresh-button"
-          disabled={loading}
+          disabled={isLoading}
         >
-          {loading ? "Refreshing..." : "Refresh Posts"}
+          {isLoading ? "Refreshing..." : "Refresh Posts"}
         </button>
       </div>
       <div className="posts-list">

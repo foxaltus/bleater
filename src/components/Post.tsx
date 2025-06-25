@@ -1,38 +1,11 @@
-import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
-import type { Database } from "../lib/schema";
-
-type PostType = Database["public"]["Tables"]["post"]["Row"];
-type ProfileType = Database["public"]["Tables"]["profiles"]["Row"];
+import { useProfile, type PostType } from "../lib/queries";
 
 interface PostProps {
   post: PostType;
 }
 
 export default function Post({ post }: PostProps) {
-  const [profile, setProfile] = useState<ProfileType | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", post.user_id)
-          .single();
-
-        if (error) throw error;
-        setProfile(data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchProfile();
-  }, [post.user_id]);
+  const { data: profile, isLoading } = useProfile(post.user_id);
 
   // Format the date
   const formattedDate = new Date(post.created_at).toLocaleString(undefined, {
@@ -60,7 +33,7 @@ export default function Post({ post }: PostProps) {
   return (
     <div className="post-item">
       <div className="post-avatar">
-        {loading ? (
+        {isLoading ? (
           <div className="avatar-placeholder"></div>
         ) : (
           renderProfileAvatar()

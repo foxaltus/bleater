@@ -3,41 +3,31 @@ import AuthForm from "./components/AuthForm";
 import { AuthProvider } from "./lib/auth";
 import { useAuth } from "./lib/useAuth";
 import { useState } from "react";
-import { supabase } from "./lib/supabase";
 import PostList from "./components/PostList";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useCreatePost } from "./lib/queries";
 
 // Main content component shown after authentication
 function Dashboard() {
   const { user, signOut } = useAuth();
   const [postText, setPostText] = useState("");
-  const [isPosting, setIsPosting] = useState(false);
+
+  const createPost = useCreatePost();
 
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (postText.trim() && user) {
       try {
-        setIsPosting(true);
-        const { data, error } = await supabase
-          .from("post")
-          .insert([
-            {
-              message: postText.trim(),
-              user_id: user.id,
-            },
-          ])
-          .select();
+        await createPost.mutateAsync({
+          message: postText.trim(),
+          userId: user.id,
+        });
 
-        if (error) {
-          throw error;
-        }
-
-        console.log("Post saved successfully:", data);
+        console.log("Post saved successfully");
         setPostText(""); // Clear the input after posting
       } catch (error) {
         console.error("Error saving post:", error);
         alert("Failed to save your post. Please try again.");
-      } finally {
-        setIsPosting(false);
       }
     }
   };
@@ -77,8 +67,11 @@ function Dashboard() {
             ></textarea>
             <div className="post-actions">
               <span className="char-count">{postText.length}/280</span>
-              <button type="submit" disabled={!postText.trim() || isPosting}>
-                {isPosting ? "Posting..." : "Post"}
+              <button
+                type="submit"
+                disabled={!postText.trim() || createPost.isPending}
+              >
+                {createPost.isPending ? "Posting..." : "Post"}
               </button>
             </div>
           </form>
@@ -102,11 +95,16 @@ function AppContent() {
   return user ? <Dashboard /> : <AuthForm />;
 }
 
+// Create a client
+const queryClient = new QueryClient();
+
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
