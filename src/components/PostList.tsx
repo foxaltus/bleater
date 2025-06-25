@@ -2,12 +2,7 @@ import Post from "./Post";
 import { usePosts } from "../lib/queries";
 
 export default function PostList() {
-  const { data: posts = [], isLoading, isError, error, refetch } = usePosts();
-
-  // Function to refresh posts manually
-  const refreshPosts = () => {
-    refetch();
-  };
+  const { data: posts = [], isLoading, isError, error } = usePosts();
 
   if (isLoading) {
     return <div className="loading-posts">Loading posts...</div>;
@@ -27,21 +22,10 @@ export default function PostList() {
   }
 
   return (
-    <div>
-      <div className="posts-header">
-        <button
-          onClick={refreshPosts}
-          className="refresh-button"
-          disabled={isLoading}
-        >
-          {isLoading ? "Refreshing..." : "Refresh Posts"}
-        </button>
-      </div>
-      <div className="posts-list">
-        {posts.map((post) => (
-          <Post key={post.id} post={post} />
-        ))}
-      </div>
+    <div className="posts-list">
+      {posts.map((post) => (
+        <Post key={post.id} post={post} />
+      ))}
     </div>
   );
 }

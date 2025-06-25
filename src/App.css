@@ -148,32 +148,7 @@
   padding-bottom: 8px;
 }
 
-.posts-header {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 16px;
-}
-
-.refresh-button {
-  background-color: #1d9bf0; /* Twitter blue */
-  color: white;
-  padding: 8px 16px;
-  border-radius: 9999px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  font-size: 0.875rem;
-}
-
-.refresh-button:hover {
-  background-color: #1a8cd8;
-}
-
-.refresh-button:disabled {
-  background-color: #8ecdf8;
-  cursor: not-allowed;
-}
+/* Refresh button removed */
 
 .posts-list {
   display: flex;
