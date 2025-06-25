@@ -32,8 +32,12 @@ function AuthForm() {
           <Auth
             supabaseClient={supabase}
             appearance={{ theme: ThemeSupa }}
-            providers={['google', 'github']}
+            providers={['github']}
             socialLayout="horizontal"
+            view="sign_in"
+            showLinks={false}
+            redirectTo={window.location.origin}
+            onlyThirdPartyProviders={true}
           />
         </div>
       </div>
