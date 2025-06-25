@@ -14,6 +14,25 @@ function Dashboard() {
 
   const createPost = useCreatePost();
 
+  // Console log to help debug user metadata
+  console.log("User:", user);
+
+  // Check for all possible username keys in metadata
+  const getUserName = () => {
+    if (!user?.user_metadata) return user?.email?.split("@")[0] ?? "User";
+
+    // Try different possible keys for username
+    return (
+      user.user_metadata.user_name ??
+      user.user_metadata.username ??
+      user.user_metadata.name ??
+      user?.email?.split("@")[0] ??
+      "User"
+    );
+  };
+
+  const displayName = getUserName();
+
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (postText.trim() && user) {
@@ -34,11 +53,27 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      <header>
-        <h1>Bleater Dashboard</h1>
-        <div className="user-info">
-          <span>{user?.email}</span>
-          <button onClick={signOut}>Sign Out</button>
+      <header className="twitter-header">
+        <div className="header-content">
+          <h1>Bleater</h1>
+          <div className="user-info">
+            <div className="user-profile">
+              {user?.email &&
+                (user.user_metadata?.avatar_url ? (
+                  <img
+                    src={user.user_metadata.avatar_url}
+                    alt={`@${displayName}'s profile`}
+                    className="avatar-img"
+                  />
+                ) : (
+                  <div className="avatar">
+                    {displayName.charAt(0).toUpperCase()}
+                  </div>
+                ))}
+              <span className="username">@{displayName}</span>
+            </div>
+            <button onClick={signOut}>Sign Out</button>
+          </div>
         </div>
       </header>
       <main>
@@ -48,12 +83,12 @@ function Dashboard() {
               (user.user_metadata?.avatar_url ? (
                 <img
                   src={user.user_metadata.avatar_url}
-                  alt={`${user.email}'s profile`}
+                  alt={`@${displayName}'s profile`}
                   className="avatar-img"
                 />
               ) : (
                 <div className="avatar">
-                  {user.email.charAt(0).toUpperCase()}
+                  {displayName.charAt(0).toUpperCase()}
                 </div>
               ))}
           </div>

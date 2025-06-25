@@ -11,13 +11,34 @@
   width: 100%;
 }
 
-.dashboard header {
+/* Twitter-like header styling */
+.twitter-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.header-content {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #eaeaea;
+}
+
+.twitter-header h1 {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  color: #1d9bf0; /* Twitter blue */
+  gap: 8px;
+}
+
+.twitter-logo {
+  width: 28px;
+  height: 28px;
+  fill: #1d9bf0;
 }
 
 .user-info {
@@ -26,20 +47,34 @@
   gap: 1rem;
 }
 
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.username {
+  font-weight: 600;
+  color: #0f1419;
+}
+
 .user-info button {
   background-color: #e11d48;
   color: white;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 9999px; /* Full rounded corners like Twitter */
   border: none;
   font-size: 0.875rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  font-weight: 600;
 }
 
 .user-info button:hover {
   background-color: #be123c;
 }
+
+/* Twitter-like header replaces the original dashboard header */
 
 .dashboard main {
   padding: 1rem 0;
