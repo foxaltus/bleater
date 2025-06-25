@@ -53,6 +53,28 @@
   gap: 8px;
 }
 
+/* Add smaller avatar styles for the header */
+.header-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #1d9bf0; /* Twitter blue */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.header-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #eaeaea;
+}
+
 .username {
   font-weight: 600;
   color: #0f1419;

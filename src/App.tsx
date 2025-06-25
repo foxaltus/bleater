@@ -63,10 +63,10 @@ function Dashboard() {
                   <img
                     src={user.user_metadata.avatar_url}
                     alt={`@${displayName}'s profile`}
-                    className="avatar-img"
+                    className="header-avatar-img"
                   />
                 ) : (
-                  <div className="avatar">
+                  <div className="header-avatar">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 ))}
