@@ -41,7 +41,7 @@ export default function Post({ post }: PostProps) {
       </div>
       <div className="post-content">
         <div className="post-header">
-          <span className="post-author">{profile?.name || "User"}</span>
+          <span className="post-author">@{profile?.name || "User"}</span>
           <span className="post-time">{formattedDate}</span>
         </div>
         <div className="post-message">{post.message}</div>
