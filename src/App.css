@@ -80,7 +80,34 @@
   color: #0f1419;
 }
 
-.user-info button {
+/* Sign out icon button styling - needs to be more specific than general button styles */
+.user-info button.signout-button {
+  background-color: transparent;
+  color: #536471; /* Twitter-like text color */
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+
+.user-info button.signout-button:hover {
+  background-color: rgba(15, 20, 25, 0.1);
+  color: #0f1419;
+}
+
+.user-info button.signout-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* General button style (not applied to signout-button) */
+.user-info button:not(.signout-button) {
   background-color: #e11d48;
   color: white;
   padding: 8px 16px;
