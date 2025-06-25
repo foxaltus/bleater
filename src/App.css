@@ -45,6 +45,203 @@
   padding: 1rem 0;
 }
 
+/* Post Creation Styles */
+.post-creation {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #eaeaea;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  background-color: white;
+}
+
+.profile-picture {
+  min-width: 48px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #1d9bf0; /* Twitter blue */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.avatar-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #eaeaea;
+}
+
+.post-form {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-form textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border: none;
+  resize: none;
+  font-size: 1rem;
+  border-bottom: 1px solid #eaeaea;
+  margin-bottom: 8px;
+  font-family: inherit;
+}
+
+.post-form textarea:focus {
+  outline: none;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.char-count {
+  color: #6e767d;
+  font-size: 0.875rem;
+}
+
+.post-actions button {
+  background-color: #1d9bf0; /* Twitter blue */
+  color: white;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.post-actions button:hover {
+  background-color: #1a8cd8;
+}
+
+.post-actions button:disabled {
+  background-color: #8ecdf8;
+  cursor: not-allowed;
+}
+
+/* Posts List Styles */
+.posts-container {
+  margin-top: 24px;
+}
+
+.posts-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: #0f1419;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 8px;
+}
+
+.posts-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.refresh-button {
+  background-color: #1d9bf0; /* Twitter blue */
+  color: white;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.875rem;
+}
+
+.refresh-button:hover {
+  background-color: #1a8cd8;
+}
+
+.refresh-button:disabled {
+  background-color: #8ecdf8;
+  cursor: not-allowed;
+}
+
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.post-item {
+  display: flex;
+  padding: 16px;
+  border: 1px solid #eaeaea;
+  border-radius: 16px;
+  background-color: white;
+}
+
+.post-avatar {
+  min-width: 48px;
+  margin-right: 16px;
+}
+
+.avatar-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #eaeaea;
+}
+
+.post-content {
+  flex-grow: 1;
+}
+
+.post-header {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.post-author {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.post-time {
+  color: #6e767d;
+  font-size: 0.875rem;
+}
+
+.post-message {
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.loading-posts,
+.error-message,
+.no-posts {
+  padding: 20px;
+  text-align: center;
+  color: #6e767d;
+  border: 1px solid #eaeaea;
+  border-radius: 16px;
+  background-color: white;
+}
+
+.error-message {
+  color: #e11d48;
+}
+
 /* Original Vite styles */
 .logo {
   height: 6em;
