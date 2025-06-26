@@ -194,6 +194,90 @@
   margin-top: 8px;
 }
 
+.post-item .post-actions {
+  justify-content: flex-start;
+  margin-top: 8px;
+  padding-left: 0;
+}
+
+/* Like Button Styles */
+
+.post-actions .like-button {
+  display: inline-flex;
+  align-items: center;
+  background: none !important;
+  border: none;
+  padding: 0;
+  margin-left: 0;
+  cursor: pointer;
+  transition: color 0.15s ease-in-out;
+  color: inherit;
+}
+
+.post-actions .like-button:hover {
+  background: none !important;
+}
+
+.post-actions .like-button:hover .heart-icon:not(.filled) {
+  stroke: rgb(249, 24, 128);
+}
+
+.post-actions .like-button:active {
+  background: none !important;
+}
+
+.post-actions .like-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background: none !important;
+}
+
+.heart-icon {
+  display: flex;
+  line-height: 0;
+  margin-right: 2px;
+}
+
+.heart-icon.filled {
+  fill: rgb(249, 24, 128);
+  animation: heart-pulse 0.3s ease-in-out;
+}
+
+@keyframes heart-pulse {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.heart-icon path {
+  transition: fill 0.2s, stroke 0.2s;
+}
+
+/* Create a subtle hover effect on just the heart icon */
+.post-actions .like-button:hover .heart-icon {
+  transform: scale(1.1);
+  transition: transform 0.15s ease-in-out;
+}
+
+.like-count {
+  font-size: 0.85rem;
+  color: #536471;
+  margin-left: 1px;
+}
+
+.post-actions .like-button.liked .like-count {
+  color: rgb(249, 24, 128);
+}
+
 .char-count {
   color: #6e767d;
   font-size: 0.875rem;
@@ -207,7 +291,7 @@
   margin-top: 4px;
 }
 
-.post-actions button {
+.post-actions button:not(.like-button) {
   background-color: #1d9bf0; /* Twitter blue */
   color: white;
   padding: 8px 16px;
@@ -218,11 +302,11 @@
   transition: background-color 0.2s;
 }
 
-.post-actions button:hover {
+.post-actions button:not(.like-button):hover {
   background-color: #1a8cd8;
 }
 
-.post-actions button:disabled {
+.post-actions button:not(.like-button):disabled {
   background-color: #8ecdf8;
   cursor: not-allowed;
 }
@@ -245,15 +329,21 @@
 .posts-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  border: 1px solid #eaeaea;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .post-item {
   display: flex;
   padding: 16px;
-  border: 1px solid #eaeaea;
-  border-radius: 16px;
+  border-bottom: 1px solid #eaeaea;
   background-color: white;
+  transition: background-color 0.2s;
+}
+
+.post-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 .post-avatar {
@@ -279,19 +369,30 @@
 }
 
 .post-author {
-  font-weight: bold;
-  margin-right: 8px;
+  font-weight: 700;
+  margin-right: 4px;
+  color: #0f1419;
 }
 
 .post-time {
-  color: #6e767d;
+  color: #536471;
   font-size: 0.875rem;
+  position: relative;
+  padding-left: 4px;
+}
+
+.post-time:before {
+  content: "·";
+  position: absolute;
+  left: -1px;
 }
 
 .post-message {
   line-height: 1.5;
   white-space: pre-wrap;
   word-wrap: break-word;
+  margin-bottom: 2px;
+  font-size: 0.95rem;
 }
 
 .loading-posts,

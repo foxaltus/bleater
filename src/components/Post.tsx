@@ -1,11 +1,23 @@
-import { useProfile, type PostType } from "../lib/queries";
+import {
+  useProfile,
+  usePostLikesCount,
+  useUserLike,
+  useToggleLike,
+  type PostType,
+} from "../lib/queries";
+import { useAuth } from "../lib/useAuth";
+import HeartIcon from "./HeartIcon";
 
 interface PostProps {
   post: PostType;
 }
 
 export default function Post({ post }: PostProps) {
+  const { user } = useAuth();
   const { data: profile, isLoading } = useProfile(post.user_id);
+  const { data: likesCount = 0 } = usePostLikesCount(post.id);
+  const { data: isLiked = false } = useUserLike(post.id, user?.id ?? "");
+  const toggleLikeMutation = useToggleLike();
 
   // Format the date
   const formattedDate = new Date(post.created_at).toLocaleString(undefined, {
@@ -30,6 +42,16 @@ export default function Post({ post }: PostProps) {
     }
   };
 
+  const handleLikeToggle = () => {
+    if (!user) return; // Only logged in users can like posts
+
+    toggleLikeMutation.mutate({
+      postId: post.id,
+      userId: user.id,
+      liked: isLiked,
+    });
+  };
+
   return (
     <div className="post-item">
       <div className="post-avatar">
@@ -45,6 +67,19 @@ export default function Post({ post }: PostProps) {
           <span className="post-time">{formattedDate}</span>
         </div>
         <div className="post-message">{post.message}</div>
+        <div className="post-actions">
+          <button
+            className={`like-button ${isLiked ? "liked" : ""}`}
+            onClick={handleLikeToggle}
+            disabled={!user || toggleLikeMutation.isPending}
+            aria-label={isLiked ? "Unlike post" : "Like post"}
+          >
+            <HeartIcon filled={isLiked} />
+            {likesCount > 0 && (
+              <span className="like-count">{likesCount}</span>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
