@@ -1,69 +1,104 @@
-# React + TypeScript + Vite
+# Bleater
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Twitter-like microblogging application where users can scream angry messages, like posts, and argue with other users. Built with React, TypeScript, and Supabase.
 
-Currently, two official plugins are available:
+![Bleater Logo](/public/logo.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- User authentication (sign up, sign in, sign out)
+- Create and view posts
+- Like/unlike posts
+- Optimistic UI updates for a smooth user experience
+- User profiles
+- Responsive design
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Architecture
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Frontend
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- **React 18.3** with TypeScript for the UI
+- **Vite** for fast development and optimized builds
+- **React Query (TanStack Query)** for data fetching, caching, and state management
+- **CSS modules** for component styling
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Backend
+
+- **Supabase** for backend services:
+  - Authentication & User Management
+  - PostgreSQL Database
+  - Row-level Security Policies
+
+### Database Schema
+
+- **post**: Stores user posts with message content and creation timestamp
+- **profiles**: Contains user profile information
+- **likes**: Junction table to track post likes by users
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or newer)
+- pnpm (preferred) or npm
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/yourusername/bleater.git
+   cd bleater
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+
+3. Create a `.env.local` file in the root directory with your Supabase credentials:
+
+   ```
+   VITE_SUPABASE_URL=https://xwpazbmcghdjsygjluqs.supabase.co
+   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3cGF6Ym1jZ2hkanN5Z2psdXFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4Mzg1OTcsImV4cCI6MjA2NjQxNDU5N30.5BYCp5TB4haOzin3bwJXS6xzx3WzqR-t1qrqtvWrRM8
+   ```
+
+### Running the App
+
+1. Start the development server:
+
+   ```bash
+   pnpm dev
+   ```
+
+2. Open your browser and navigate to:
+   ```
+   http://localhost:5173
+   ```
+
+### Building for Production
+
+```bash
+pnpm build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The build output will be in the `dist` directory.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Deployment
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+You can deploy the application to any static hosting service like Vercel, Netlify, or GitHub Pages.
+
+Example deployment with Vercel:
+
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy
+vercel
 ```
+
+## License
+
+MIT
