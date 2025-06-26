@@ -7,6 +7,7 @@ export type AuthContextType = {
   loading: boolean;
   signOut: () => Promise<void>;
   signInWithGitHub: () => Promise<void>;
+  autoLogin: () => boolean;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(

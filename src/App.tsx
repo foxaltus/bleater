@@ -154,19 +154,29 @@ function Dashboard() {
 }
 
 function AppContent() {
-  const { user, loading, signInWithGitHub } = useAuth();
+  const { user, loading, signInWithGitHub, autoLogin } = useAuth();
 
   useEffect(() => {
-    if (!loading && !user) {
-      // Automatically redirect to GitHub login
+    if (!loading && !user && autoLogin()) {
+      // Auto-login if enabled
       signInWithGitHub();
     }
-  }, [loading, user, signInWithGitHub]);
+  }, [loading, user, signInWithGitHub, autoLogin]);
 
   if (loading || !user) {
     return (
       <div className="loading-container">
-        <img src="/logo.png" alt="Bleater Logo" className="loading-logo" />
+        {!autoLogin() ? (
+          <div className="login-container">
+            <img src="/logo.png" alt="Bleater Logo" className="loading-logo" />
+            <h2>Welcome to Bleater</h2>
+            <button className="login-button" onClick={() => signInWithGitHub()}>
+              Sign in with GitHub
+            </button>
+          </div>
+        ) : (
+          <img src="/logo.png" alt="Bleater Logo" className="loading-logo" />
+        )}
       </div>
     );
   }

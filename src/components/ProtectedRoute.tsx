@@ -7,16 +7,16 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, loading, signInWithGitHub } = useAuth();
+  const { user, loading, signInWithGitHub, autoLogin } = useAuth();
 
-  // Automatically trigger GitHub sign-in if user is not logged in
+  // Automatically trigger GitHub sign-in if auto-login is enabled
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && autoLogin()) {
       signInWithGitHub();
     }
-  }, [loading, user, signInWithGitHub]);
+  }, [loading, user, signInWithGitHub, autoLogin]);
 
-  // Show loading screen with logo while waiting for authentication
+  // Show loading screen - sign-out UI is handled in AppContent
   if (loading || !user) {
     return (
       <div className="loading-container">
