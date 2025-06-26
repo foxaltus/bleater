@@ -81,15 +81,111 @@ export const useCreatePost = () => {
 
   return useMutation({
     mutationFn: createPost,
-    onSuccess: () => {
-      // Invalidate and refetch posts list query
+    // Optimistically update the cache for a better UX
+    onMutate: async (newPostData) => {
+      // Generate a temporary ID for the optimistic post
+      const tempId = `temp-${Date.now()}`;
+
+      // Cancel any outgoing refetches to prevent them from overwriting our optimistic update
+      await queryClient.cancelQueries({ queryKey: [queryKeys.posts] });
+
+      // Snapshot the previous value
+      const previousPosts = queryClient.getQueryData<PostType[]>([
+        queryKeys.posts,
+      ]);
+
+      // Optimistically update the cache with our new post
+      queryClient.setQueryData<PostType[]>([queryKeys.posts], (old = []) => {
+        // Create an optimistic post
+        const optimisticPost: PostType = {
+          id: tempId, // Temporary ID that will be replaced with the real one
+          message: newPostData.message,
+          user_id: newPostData.userId,
+          created_at: new Date().toISOString(),
+        };
+
+        // Insert optimistic post at the beginning of the posts array
+        return [optimisticPost, ...old];
+      });
+
+      // Pre-populate the likes cache for this temporary post ID
+      // Set likes count to 0
+      queryClient.setQueryData(queryKeys.postLikes(tempId), 0);
+
+      // Set user like status to false (not liked)
+      if (newPostData.userId) {
+        queryClient.setQueryData(
+          queryKeys.userLike(tempId, newPostData.userId),
+          false
+        );
+      }
+
+      // Return context with the previous posts and temp ID
+      return { previousPosts, tempId };
+    },
+    // On error, roll back the optimistic update
+    onError: (_error, variables, context) => {
+      if (context?.previousPosts) {
+        queryClient.setQueryData([queryKeys.posts], context.previousPosts);
+      }
+
+      // Clean up the likes cache for the temporary post ID
+      if (context?.tempId) {
+        queryClient.removeQueries({
+          queryKey: queryKeys.postLikes(context.tempId),
+        });
+        if (variables.userId) {
+          queryClient.removeQueries({
+            queryKey: queryKeys.userLike(context.tempId, variables.userId),
+          });
+        }
+      }
+    },
+    // Handle successful post creation
+    onSuccess: (data, variables, context) => {
+      // If we have a real post ID now (should be in the data)
+      if (data?.[0]?.id && context?.tempId) {
+        const realPostId = data[0].id;
+
+        // Set proper likes count for the real post ID
+        queryClient.setQueryData(queryKeys.postLikes(realPostId), 0);
+
+        // Set proper user like status for the real post ID
+        if (variables.userId) {
+          queryClient.setQueryData(
+            queryKeys.userLike(realPostId, variables.userId),
+            false
+          );
+        }
+      }
+    },
+
+    // Always refetch after error or success to ensure data consistency
+    onSettled: (_data, _error, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [queryKeys.posts] });
+
+      // Clean up the temporary likes caches
+      if (context?.tempId) {
+        queryClient.removeQueries({
+          queryKey: queryKeys.postLikes(context.tempId),
+        });
+        if (variables.userId) {
+          queryClient.removeQueries({
+            queryKey: queryKeys.userLike(context.tempId, variables.userId),
+          });
+        }
+      }
     },
   });
 };
 
 // Fetch post likes count
 export const fetchPostLikesCount = async (postId: string) => {
+  // If this is a temporary post ID (optimistic update), don't make a network request
+  if (postId.startsWith("temp-")) {
+    return 0; // Temporary posts always have 0 likes
+  }
+
   const { count, error } = await supabase
     .from("likes")
     .select("*", { count: "exact", head: true })
@@ -111,6 +207,11 @@ export const usePostLikesCount = (postId: string) => {
 // Check if user has liked a post
 export const checkUserLike = async (postId: string, userId: string) => {
   if (!userId) return false;
+
+  // If this is a temporary post ID (optimistic update), don't make a network request
+  if (postId.startsWith("temp-")) {
+    return false; // Temporary posts are never liked initially
+  }
 
   const { data, error } = await supabase
     .from("likes")
@@ -171,12 +272,72 @@ export const useToggleLike = () => {
 
   return useMutation({
     mutationFn: toggleLike,
+    // Handle optimistic updates for likes
+    onMutate: async ({ postId, userId, liked }) => {
+      // If this is a temporary post, just update the cache (no server request)
+      if (postId.startsWith("temp-")) {
+        // Cancel any outgoing refetches
+        await queryClient.cancelQueries({
+          queryKey: queryKeys.postLikes(postId),
+        });
+        await queryClient.cancelQueries({
+          queryKey: queryKeys.userLike(postId, userId),
+        });
+
+        // Snapshot current values
+        const previousLikeCount =
+          queryClient.getQueryData<number>(queryKeys.postLikes(postId)) ?? 0;
+        const previousUserLike =
+          queryClient.getQueryData<boolean>(
+            queryKeys.userLike(postId, userId)
+          ) ?? false;
+
+        // Update like count optimistically
+        const newCount = liked ? previousLikeCount - 1 : previousLikeCount + 1;
+        queryClient.setQueryData(queryKeys.postLikes(postId), newCount);
+
+        // Update user like status optimistically
+        queryClient.setQueryData(queryKeys.userLike(postId, userId), !liked);
+
+        return {
+          previousLikeCount,
+          previousUserLike,
+          isTemporary: true,
+        };
+      }
+
+      return { isTemporary: false };
+    },
+    onError: (_error, { postId, userId }, context) => {
+      // Only rollback if it was a temporary post
+      if (context?.isTemporary) {
+        // Restore previous values
+        if (context.previousLikeCount !== undefined) {
+          queryClient.setQueryData(
+            queryKeys.postLikes(postId),
+            context.previousLikeCount
+          );
+        }
+
+        if (context.previousUserLike !== undefined) {
+          queryClient.setQueryData(
+            queryKeys.userLike(postId, userId),
+            context.previousUserLike
+          );
+        }
+      }
+    },
     onSuccess: ({ postId, userId }) => {
-      // Invalidate and refetch likes queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.postLikes(postId) });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.userLike(postId, userId),
-      });
+      // Only invalidate for real posts (not temporary ones)
+      if (!postId.startsWith("temp-")) {
+        // Invalidate and refetch likes queries
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.postLikes(postId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.userLike(postId, userId),
+        });
+      }
     },
   });
 };

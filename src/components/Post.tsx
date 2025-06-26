@@ -52,8 +52,11 @@ export default function Post({ post }: PostProps) {
     });
   };
 
+  // Check if this is a temporary post (still saving)
+  const isSaving = post.id.startsWith('temp-');
+  
   return (
-    <div className="post-item">
+    <div className={`post-item ${isSaving ? 'saving' : ''}`}>
       <div className="post-avatar">
         {isLoading ? (
           <div className="avatar-placeholder"></div>
@@ -64,21 +67,30 @@ export default function Post({ post }: PostProps) {
       <div className="post-content">
         <div className="post-header">
           <span className="post-author">@{profile?.name || "User"}</span>
-          <span className="post-time">{formattedDate}</span>
+          <span className="post-time">
+            {isSaving ? (
+              <>
+                <span className="saving-indicator">Saving...</span>
+              </>
+            ) : formattedDate}
+          </span>
         </div>
         <div className="post-message">{post.message}</div>
         <div className="post-actions">
-          <button
-            className={`like-button ${isLiked ? "liked" : ""}`}
-            onClick={handleLikeToggle}
-            disabled={!user || toggleLikeMutation.isPending}
-            aria-label={isLiked ? "Unlike post" : "Like post"}
-          >
-            <HeartIcon filled={isLiked} />
-            {likesCount > 0 && (
-              <span className="like-count">{likesCount}</span>
-            )}
-          </button>
+          <div className="action-container">
+            <button
+              className={`like-button ${isLiked ? "liked" : ""}`}
+              onClick={handleLikeToggle}
+              disabled={!user || toggleLikeMutation.isPending}
+              aria-label={isLiked ? "Unlike post" : "Like post"}
+            >
+              <HeartIcon filled={isLiked} />
+              {likesCount > 0 && (
+                <span className="like-count">{likesCount}</span>
+              )}
+            </button>
+            {isSaving && <span className="micro-indicator" title="This post is still being saved">⟳</span>}
+          </div>
         </div>
       </div>
     </div>

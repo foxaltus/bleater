@@ -32,21 +32,27 @@ function Dashboard() {
 
   const displayName = getUserName();
 
-  const handlePostSubmit = async (e: React.FormEvent) => {
+  const handlePostSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (postText.trim() && user) {
-      try {
-        await createPost.mutateAsync({
-          message: postText.trim(),
-          userId: user.id,
-        });
+      // With optimistic updates, we can clear the input immediately
+      const message = postText.trim();
+      setPostText(""); // Clear the input right away for better UX
 
-        console.log("Post saved successfully");
-        setPostText(""); // Clear the input after posting
-      } catch (error) {
-        console.error("Error saving post:", error);
-        alert("Failed to save your post. Please try again.");
-      }
+      createPost.mutate(
+        {
+          message,
+          userId: user.id,
+        },
+        {
+          onError: (error) => {
+            console.error("Error saving post:", error);
+            // Restore the post text if there was an error
+            setPostText(message);
+            alert("Failed to save your post. Please try again.");
+          },
+        }
+      );
     }
   };
 
@@ -121,7 +127,7 @@ function Dashboard() {
                   !e.ctrlKey
                 ) {
                   e.preventDefault();
-                  if (postText.trim() && !createPost.isPending) {
+                  if (postText.trim()) {
                     handlePostSubmit(e);
                   }
                 }
@@ -135,11 +141,8 @@ function Dashboard() {
                   Press Enter to post, Shift+Enter for line break
                 </span>
               </span>
-              <button
-                type="submit"
-                disabled={!postText.trim() || createPost.isPending}
-              >
-                {createPost.isPending ? "Posting..." : "Post"}
+              <button type="submit" disabled={!postText.trim()}>
+                Post
               </button>
             </div>
           </form>

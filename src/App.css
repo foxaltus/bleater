@@ -228,7 +228,6 @@
 }
 
 .post-actions .like-button:disabled {
-  cursor: not-allowed;
   opacity: 0.6;
   background: none !important;
 }
@@ -309,7 +308,6 @@
 
 .post-actions button:not(.like-button):disabled {
   background-color: #8ecdf8;
-  cursor: not-allowed;
 }
 
 /* Posts List Styles */
@@ -340,7 +338,33 @@
   padding: 16px;
   border-bottom: 1px solid #eaeaea;
   background-color: white;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, opacity 0.3s ease;
+}
+
+/* Styling for posts that are still saving */
+.post-item.saving {
+  opacity: 0.7;
+  position: relative;
+}
+
+.post-item.saving::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, transparent, #1d9bf0, transparent);
+  animation: loading 1.5s infinite ease-in-out;
+}
+
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .post-item:hover {
@@ -511,4 +535,44 @@
 
 .login-button:hover {
   background-color: #1a8cd8;
+}
+
+.saving-indicator {
+  color: #1d9bf0;
+  font-style: italic;
+  font-size: 0.85em;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+.action-container {
+  display: flex;
+  align-items: center;
+}
+
+.micro-indicator {
+  margin-left: 8px;
+  color: #1d9bf0;
+  font-size: 0.75rem;
+  animation: spin 1.5s infinite linear;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
