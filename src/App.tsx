@@ -108,7 +108,7 @@ function Dashboard() {
           </div>
           <form className="post-form" onSubmit={handlePostSubmit}>
             <textarea
-              placeholder="What's happening?"
+              placeholder="What's happening???"
               aria-label="Create a new post"
               value={postText}
               onChange={(e) => setPostText(e.target.value)}

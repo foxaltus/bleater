@@ -181,6 +181,7 @@
   border-bottom: 1px solid #eaeaea;
   margin-bottom: 8px;
   font-family: inherit;
+  text-transform: uppercase; /* Make text appear as ALL CAPS while typing */
 }
 
 .post-form textarea:focus {
@@ -393,6 +394,7 @@
   word-wrap: break-word;
   margin-bottom: 2px;
   font-size: 0.95rem;
+  text-transform: uppercase; /* Make all bleats appear in ALL CAPS */
 }
 
 .loading-posts,
