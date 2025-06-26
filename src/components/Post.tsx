@@ -43,8 +43,9 @@ export default function Post({ post }: PostProps) {
   };
 
   const handleLikeToggle = () => {
-    if (!user) return; // Only logged in users can like posts
+    if (!user || toggleLikeMutation.isPending) return; // Only logged in users can like posts and prevent double-clicking
 
+    // Call the toggle like mutation with optimistic updates
     toggleLikeMutation.mutate({
       postId: post.id,
       userId: user.id,
@@ -53,10 +54,10 @@ export default function Post({ post }: PostProps) {
   };
 
   // Check if this is a temporary post (still saving)
-  const isSaving = post.id.startsWith('temp-');
-  
+  const isSaving = post.id.startsWith("temp-");
+
   return (
-    <div className={`post-item ${isSaving ? 'saving' : ''}`}>
+    <div className={`post-item ${isSaving ? "saving" : ""}`}>
       <div className="post-avatar">
         {isLoading ? (
           <div className="avatar-placeholder"></div>
@@ -72,16 +73,20 @@ export default function Post({ post }: PostProps) {
               <>
                 <span className="saving-indicator">Saving...</span>
               </>
-            ) : formattedDate}
+            ) : (
+              formattedDate
+            )}
           </span>
         </div>
         <div className="post-message">{post.message}</div>
         <div className="post-actions">
           <div className="action-container">
             <button
-              className={`like-button ${isLiked ? "liked" : ""}`}
+              className={`like-button ${isLiked ? "liked" : ""} ${
+                toggleLikeMutation.isPending ? "liking" : ""
+              }`}
               onClick={handleLikeToggle}
-              disabled={!user || toggleLikeMutation.isPending}
+              disabled={!user}
               aria-label={isLiked ? "Unlike post" : "Like post"}
             >
               <HeartIcon filled={isLiked} />
@@ -89,7 +94,14 @@ export default function Post({ post }: PostProps) {
                 <span className="like-count">{likesCount}</span>
               )}
             </button>
-            {isSaving && <span className="micro-indicator" title="This post is still being saved">⟳</span>}
+            {isSaving && (
+              <span
+                className="micro-indicator"
+                title="This post is still being saved"
+              >
+                ⟳
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -348,7 +348,7 @@
 }
 
 .post-item.saving::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -574,5 +574,34 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/* Like button style while pending */
+.like-button.liking {
+  position: relative;
+  overflow: hidden;
+}
+
+.like-button.liking::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(to right, transparent, #f91880, transparent);
+  animation: liking-pulse 1s infinite ease-in-out;
+}
+
+@keyframes liking-pulse {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
   }
 }

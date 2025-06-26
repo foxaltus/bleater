@@ -272,45 +272,41 @@ export const useToggleLike = () => {
 
   return useMutation({
     mutationFn: toggleLike,
-    // Handle optimistic updates for likes
+    // Handle optimistic updates for likes for both temporary and real posts
     onMutate: async ({ postId, userId, liked }) => {
-      // If this is a temporary post, just update the cache (no server request)
-      if (postId.startsWith("temp-")) {
-        // Cancel any outgoing refetches
-        await queryClient.cancelQueries({
-          queryKey: queryKeys.postLikes(postId),
-        });
-        await queryClient.cancelQueries({
-          queryKey: queryKeys.userLike(postId, userId),
-        });
+      // For any post type (temporary or real), implement optimistic update
+      // Cancel any outgoing refetches to avoid race conditions
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.postLikes(postId),
+      });
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.userLike(postId, userId),
+      });
 
-        // Snapshot current values
-        const previousLikeCount =
-          queryClient.getQueryData<number>(queryKeys.postLikes(postId)) ?? 0;
-        const previousUserLike =
-          queryClient.getQueryData<boolean>(
-            queryKeys.userLike(postId, userId)
-          ) ?? false;
+      // Snapshot current values
+      const previousLikeCount =
+        queryClient.getQueryData<number>(queryKeys.postLikes(postId)) ?? 0;
+      const previousUserLike =
+        queryClient.getQueryData<boolean>(queryKeys.userLike(postId, userId)) ??
+        false;
 
-        // Update like count optimistically
-        const newCount = liked ? previousLikeCount - 1 : previousLikeCount + 1;
-        queryClient.setQueryData(queryKeys.postLikes(postId), newCount);
+      // Update like count optimistically
+      const newCount = liked ? previousLikeCount - 1 : previousLikeCount + 1;
+      queryClient.setQueryData(queryKeys.postLikes(postId), newCount);
 
-        // Update user like status optimistically
-        queryClient.setQueryData(queryKeys.userLike(postId, userId), !liked);
+      // Update user like status optimistically
+      queryClient.setQueryData(queryKeys.userLike(postId, userId), !liked);
 
-        return {
-          previousLikeCount,
-          previousUserLike,
-          isTemporary: true,
-        };
-      }
-
-      return { isTemporary: false };
+      // Return context with the previous values and whether this is a temporary post
+      return {
+        previousLikeCount,
+        previousUserLike,
+        isTemporary: postId.startsWith("temp-"),
+      };
     },
     onError: (_error, { postId, userId }, context) => {
-      // Only rollback if it was a temporary post
-      if (context?.isTemporary) {
+      // For any post type, restore previous values on error
+      if (context) {
         // Restore previous values
         if (context.previousLikeCount !== undefined) {
           queryClient.setQueryData(
@@ -327,10 +323,11 @@ export const useToggleLike = () => {
         }
       }
     },
-    onSuccess: ({ postId, userId }) => {
-      // Only invalidate for real posts (not temporary ones)
+    onSettled: (_data, _error, { postId, userId }) => {
+      // For real posts, invalidate to ensure consistency with server
+      // We do this regardless of success or error to ensure data consistency
       if (!postId.startsWith("temp-")) {
-        // Invalidate and refetch likes queries
+        // Invalidate and refetch likes queries to ensure consistency
         queryClient.invalidateQueries({
           queryKey: queryKeys.postLikes(postId),
         });
