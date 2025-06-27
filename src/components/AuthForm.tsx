@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
-import { supabase } from '../lib/supabase';
-import type { Session } from '@supabase/supabase-js';
-import './AuthForm.css';
+import { useEffect, useState } from "react";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { supabase } from "../lib/supabase";
+import type { Session } from "@supabase/supabase-js";
+import "./AuthForm.css";
 
 function AuthForm() {
   const [session, setSession] = useState<Session | null>(null);
@@ -32,11 +32,11 @@ function AuthForm() {
           <Auth
             supabaseClient={supabase}
             appearance={{ theme: ThemeSupa }}
-            providers={['github']}
+            providers={["github"]}
             socialLayout="horizontal"
             view="sign_in"
             showLinks={false}
-            redirectTo={window.location.origin}
+            redirectTo={`${window.location.origin}${import.meta.env.BASE_URL}`}
             onlyThirdPartyProviders={true}
           />
         </div>
