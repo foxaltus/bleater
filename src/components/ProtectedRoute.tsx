@@ -20,7 +20,11 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (loading || !user) {
     return (
       <div className="loading-container">
-        <img src="/logo.png" alt="Bleater Logo" className="loading-logo" />
+        <img
+          src={import.meta.env.BASE_URL + "logo.png"}
+          alt="Bleater Logo"
+          className="loading-logo"
+        />
       </div>
     );
   }

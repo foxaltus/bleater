@@ -61,7 +61,11 @@ function Dashboard() {
       <header className="twitter-header">
         <div className="header-content">
           <h1>
-            <img src="/logo.png" alt="Bleater Logo" className="twitter-logo" />
+            <img
+              src={import.meta.env.BASE_URL + "logo.png"}
+              alt="Bleater Logo"
+              className="twitter-logo"
+            />
             Bleater
           </h1>
           <div className="user-info">
@@ -171,14 +175,22 @@ function AppContent() {
       <div className="loading-container">
         {!autoLogin() ? (
           <div className="login-container">
-            <img src="/logo.png" alt="Bleater Logo" className="loading-logo" />
+            <img
+              src={import.meta.env.BASE_URL + "logo.png"}
+              alt="Bleater Logo"
+              className="loading-logo"
+            />
             <h2>Welcome to Bleater</h2>
             <button className="login-button" onClick={() => signInWithGitHub()}>
               Sign in with GitHub
             </button>
           </div>
         ) : (
-          <img src="/logo.png" alt="Bleater Logo" className="loading-logo" />
+          <img
+            src={import.meta.env.BASE_URL + "logo.png"}
+            alt="Bleater Logo"
+            className="loading-logo"
+          />
         )}
       </div>
     );
