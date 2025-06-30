@@ -15,9 +15,7 @@
 .twitter-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #eaeaea;
 }
 
 .header-content {
@@ -126,7 +124,7 @@
 /* Twitter-like header replaces the original dashboard header */
 
 .dashboard main {
-  padding: 1rem 0;
+  padding: 0;
 }
 
 /* Post Creation Styles */
@@ -172,9 +170,10 @@
 }
 
 .post-form textarea {
-  width: 380px;
+  flex: 1 1 0;
   min-height: 80px;
-  padding: 12px;
+  max-width: 380px;
+  padding: 12px 0;
   border: none;
   resize: none;
   font-size: 1rem;
@@ -193,6 +192,7 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 8px;
+  gap: 8px;
 }
 
 .post-item .post-actions {
@@ -213,6 +213,21 @@
   cursor: pointer;
   transition: color 0.15s ease-in-out;
   color: inherit;
+  outline: none; /* Remove focus outline */
+}
+
+.post-actions .like-button:focus {
+  outline: none; /* Ensure no outline on focus */
+}
+
+/* Add the same hover effects to focus state */
+.post-actions .like-button:focus .heart-icon:not(.filled) {
+  stroke: rgb(249, 24, 128);
+}
+
+.post-actions .like-button:focus .heart-icon {
+  transform: scale(1.1);
+  transition: transform 0.15s ease-in-out;
 }
 
 .post-actions .like-button:hover {
@@ -289,6 +304,13 @@
   font-size: 0.75rem;
   color: #8899a6;
   margin-top: 4px;
+}
+
+/* Hide keyboard hint on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .keyboard-hint {
+    display: none;
+  }
 }
 
 .post-actions button:not(.like-button) {
@@ -476,10 +498,11 @@
 /* Loading animation styles */
 .loading-container {
   display: flex;
+  flex-grow: 1;
+  margin: auto;
+  height: 100%;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  width: 100%;
 }
 
 .loading-logo {

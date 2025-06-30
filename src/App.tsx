@@ -6,6 +6,12 @@ import PostList from "./components/PostList";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCreatePost } from "./lib/queries";
 
+// Utility function to detect touch devices
+function isTouchDevice() {
+  return (('ontouchstart' in window) ||
+     (navigator.maxTouchPoints > 0));
+}
+
 // Main content component shown after authentication
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -128,7 +134,8 @@ function Dashboard() {
                   e.key === "Enter" &&
                   !e.altKey &&
                   !e.shiftKey &&
-                  !e.ctrlKey
+                  !e.ctrlKey &&
+                  !isTouchDevice() // Disable Enter-to-post on touch devices
                 ) {
                   e.preventDefault();
                   if (postText.trim()) {
@@ -141,9 +148,11 @@ function Dashboard() {
             <div className="post-actions">
               <span className="char-count">
                 {postText.length}/280
-                <span className="keyboard-hint">
-                  Press Enter to post, Shift+Enter for line break
-                </span>
+                {!isTouchDevice() && (
+                  <span className="keyboard-hint">
+                    Press Enter to post, Shift+Enter for line break
+                  </span>
+                )}
               </span>
               <button type="submit" disabled={!postText.trim()}>
                 Post
