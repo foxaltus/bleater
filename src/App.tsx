@@ -8,8 +8,7 @@ import { useCreatePost } from "./lib/queries";
 
 // Utility function to detect touch devices
 function isTouchDevice() {
-  return (('ontouchstart' in window) ||
-     (navigator.maxTouchPoints > 0));
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
 }
 
 // Main content component shown after authentication
@@ -18,9 +17,6 @@ function Dashboard() {
   const [postText, setPostText] = useState("");
 
   const createPost = useCreatePost();
-
-  // Console log to help debug user metadata
-  console.log("User:", user);
 
   // Check for all possible username keys in metadata
   const getUserName = () => {
